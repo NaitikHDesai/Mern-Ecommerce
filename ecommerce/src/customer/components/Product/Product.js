@@ -11,10 +11,18 @@ import {
 import { MensKurta } from "../../../Data/MensKurta";
 import ProductCard from "./ProductCard";
 import { filters, singleFilter } from "./FilterData";
-import { FormControl, FormControlLabel, FormLabel,Radio, RadioGroup } from "@mui/material";
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { useLocation, useNavigate } from "react-router-dom";
+
 const sortOptions = [
+  //   { name: "Most Popular", href: "#", current: true },
+  //   { name: "Best Rating", href: "#", current: false },
+  //   { name: "Newest", href: "#", current: false },
   { name: "Price: Low to High", href: "#", current: false },
   { name: "Price: High to Low", href: "#", current: false },
 ];
@@ -22,38 +30,40 @@ const sortOptions = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-export default function Product() {
+function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const location=useLocation();
-  const navigate=useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search);
 
-    let filterValues = searchParams.getAll(sectionId);
+    let filterValue = searchParams.getAll(sectionId);
 
-    if (filterValues.length > 0 && filterValues[0].split(",").includes(value)) {
-      filterValues = filterValues[0]
-        .split(",")
-        .filter((item) => item !== value);
-      if (filterValues.length === 0) {
+    if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
+      filterValue = filterValue[0].split(",").filter((item) => item !== value);
+
+      if (filterValue.length === 0) {
         searchParams.delete(sectionId);
       }
-      console.log("includes");
     } else {
-      // Remove all values for the current section
-      // searchParams.delete(sectionId);
-      filterValues.push(value);
+      filterValue.push(value);
     }
 
-    if (filterValues.length > 0)
-      searchParams.set(sectionId, filterValues.join(","));
+    if (filterValue.length > 0)
+      searchParams.set(sectionId, filterValue.join(","));
 
-    // history.push({ search: searchParams.toString() });
     const query = searchParams.toString();
     navigate({ search: `?${query}` });
   };
+
+  const handleRadioFilterChange = (e, sectionId) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set(sectionId, e.target.value);
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  };
+
   return (
     <div className="bg-white">
       <div>
@@ -88,16 +98,17 @@ export default function Product() {
               >
                 <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl">
                   <div className="flex items-center justify-between px-4">
-                    <h2 className="text-lg font-medium text-gray-900">
-                      Filters
-                    </h2>
+                    <h2 className="text-lg font-medium text-black">Filters</h2>
                     <button
                       type="button"
                       className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
                       onClick={() => setMobileFiltersOpen(false)}
                     >
                       <span className="sr-only">Close menu</span>
-                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                      <XMarkIcon
+                        className="h-6 w-6 text-black"
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
 
@@ -119,12 +130,12 @@ export default function Product() {
                                 <span className="ml-6 flex items-center">
                                   {open ? (
                                     <MinusIcon
-                                      className="h-5 w-5"
+                                      className="h-5 w-5 text-gray-900"
                                       aria-hidden="true"
                                     />
                                   ) : (
                                     <PlusIcon
-                                      className="h-5 w-5"
+                                      className="h-5 w-5 text-gray-900"
                                       aria-hidden="true"
                                     />
                                   )}
@@ -145,10 +156,13 @@ export default function Product() {
                                       type="checkbox"
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      onChange={() =>
+                                        handleFilter(option.value, section.id)
+                                      }
                                     />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
+                                      className="ml-3 min-w-0 flex-1 text-gray-900"
                                     >
                                       {option.label}
                                     </label>
@@ -243,8 +257,9 @@ export default function Product() {
             </h2>
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
+              {/* Filters */}
               <div>
-                <div className=" py-10 flex justify-between items-center">
+                <div className="py-10 flex justify-between items-center">
                   <h1 className="text-lg opacity-50 font-bold">Filters</h1>
                   <FilterListIcon />
                 </div>
@@ -265,12 +280,12 @@ export default function Product() {
                               <span className="ml-6 flex items-center">
                                 {open ? (
                                   <MinusIcon
-                                    className="h-5 w-5"
+                                    className="h-5 w-5 text-gray-900"
                                     aria-hidden="true"
                                   />
                                 ) : (
                                   <PlusIcon
-                                    className="h-5 w-5"
+                                    className="h-5 w-5 text-gray-900"
                                     aria-hidden="true"
                                   />
                                 )}
@@ -285,7 +300,9 @@ export default function Product() {
                                   className="flex items-center"
                                 >
                                   <input
-                                  onChange={()=>handleFilter(option.value,section.id)}
+                                    onChange={() =>
+                                      handleFilter(option.value, section.id)
+                                    }
                                     id={`filter-${section.id}-${optionIdx}`}
                                     name={`${section.id}[]`}
                                     defaultValue={option.value}
@@ -295,7 +312,7 @@ export default function Product() {
                                   />
                                   <label
                                     htmlFor={`filter-${section.id}-${optionIdx}`}
-                                    className="ml-3 text-sm text-gray-600"
+                                    className="ml-3 text-sm text-gray-900"
                                   >
                                     {option.label}
                                   </label>
@@ -308,6 +325,7 @@ export default function Product() {
                     </Disclosure>
                   ))}
 
+                  {/* Single Filters */}
                   {singleFilter.map((section) => (
                     <Disclosure
                       as="div"
@@ -318,18 +336,22 @@ export default function Product() {
                         <>
                           <h3 className="-my-3 flow-root">
                             <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                              <span className="font-medium text-gray-900">
+                              <FormLabel
+                                id="demo-radio-buttons-group-label"
+                                className="text-gray-900"
+                                sx={{ color: "#111827" }}
+                              >
                                 {section.name}
-                              </span>
-                              <span className="ml-6 flex items-left">
+                              </FormLabel>
+                              <span className="ml-6 flex items-center">
                                 {open ? (
                                   <MinusIcon
-                                    className="h-5 w-5"
+                                    className="h-5 w-5 text-gray-900"
                                     aria-hidden="true"
                                   />
                                 ) : (
                                   <PlusIcon
-                                    className="h-5 w-5"
+                                    className="h-5 w-5 text-gray-900"
                                     aria-hidden="true"
                                   />
                                 )}
@@ -345,13 +367,15 @@ export default function Product() {
                                   name="radio-buttons-group"
                                 >
                                   {section.options.map((option, optionIdx) => (
-                                    <>
-                                      <FormControlLabel
-                                        value={option.id}
-                                        control={<Radio />}
-                                        label={option.label}
-                                      />
-                                    </>
+                                    <FormControlLabel
+                                      onChange={(e) =>
+                                        handleRadioFilterChange(e, section.id)
+                                      }
+                                      value={option.value}
+                                      control={<Radio />}
+                                      label={option.label}
+                                      className="text-gray-900 text-sm"
+                                    />
                                   ))}
                                 </RadioGroup>
                               </FormControl>
@@ -379,3 +403,5 @@ export default function Product() {
     </div>
   );
 }
+
+export default Product;

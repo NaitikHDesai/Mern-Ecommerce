@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -6,28 +6,30 @@ import {
   ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import {  useNavigate } from "react-router-dom";
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
-
-import { navigation } from "./navigationData";
-
+import { navigationData } from "./navigationData";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
-
+  const navigate=useNavigate();
   const [openAuthModal, setOpenAuthModal] = useState(false);
-  const [anchorE1, setAnchorE1] = useState(null);
-  const openUserMenu = Boolean(anchorE1);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
   const jwt = localStorage.getItem("jwt");
+  
+
+
 
   const handleUserClick = (event) => {
-    setAnchorE1(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
   const handleCloseUserMenu = (event) => {
-    setAnchorE1(null);
+    setAnchorEl(null);
   };
 
   const handleOpen = () => {
@@ -38,9 +40,12 @@ export default function Navigation() {
   };
 
   const handleCategoryClick = (category, section, item, close) => {
-    //navigate(`/${category.id}/${section.id}/${item.id});
+    navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
   };
+
+  
+
 
   return (
     <div className="bg-white pb-10">
@@ -73,10 +78,9 @@ export default function Navigation() {
                 <div className="flex px-4 pb-2 pt-5">
                   <button
                     type="button"
-                    className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+                    className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
                     onClick={() => setOpen(false)}
                   >
-                    <span className="absolute -inset-0.5" />
                     <span className="sr-only">Close menu</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
@@ -86,7 +90,7 @@ export default function Navigation() {
                 <Tab.Group as="div" className="mt-2">
                   <div className="border-b border-gray-200">
                     <Tab.List className="-mb-px flex space-x-8 px-4">
-                      {navigation.categories.map((category) => (
+                      {navigationData.categories.map((category) => (
                         <Tab
                           key={category.name}
                           className={({ selected }) =>
@@ -94,7 +98,7 @@ export default function Navigation() {
                               selected
                                 ? "border-indigo-600 text-indigo-600"
                                 : "border-transparent text-gray-900",
-                              "flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium"
+                              "flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium border-none"
                             )
                           }
                         >
@@ -104,7 +108,7 @@ export default function Navigation() {
                     </Tab.List>
                   </div>
                   <Tab.Panels as={Fragment}>
-                    {navigation.categories.map((category) => (
+                    {navigationData.categories.map((category) => (
                       <Tab.Panel
                         key={category.name}
                         className="space-y-10 px-4 pb-8 pt-10"
@@ -146,6 +150,7 @@ export default function Navigation() {
                             >
                               {section.name}
                             </p>
+                            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
                             <ul
                               role="list"
                               aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
@@ -153,12 +158,9 @@ export default function Navigation() {
                             >
                               {section.items.map((item) => (
                                 <li key={item.name} className="flow-root">
-                                  <a
-                                    href={item.href}
-                                    className="-m-2 block p-2 text-gray-500"
-                                  >
-                                    {item.name}
-                                  </a>
+                                  <p className="-m-2 block p-2 text-gray-500">
+                                    {"item.name"}
+                                  </p>
                                 </li>
                               ))}
                             </ul>
@@ -170,7 +172,7 @@ export default function Navigation() {
                 </Tab.Group>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  {navigation.pages.map((page) => (
+                  {navigationData.pages.map((page) => (
                     <div key={page.name} className="flow-root">
                       <a
                         href={page.href}
@@ -185,24 +187,16 @@ export default function Navigation() {
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   <div className="flow-root">
                     <a
-                      href="#"
+                      href="/"
                       className="-m-2 block p-2 font-medium text-gray-900"
                     >
                       Sign in
                     </a>
                   </div>
-                  <div className="flow-root">
-                    <a
-                      href="#"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Create account
-                    </a>
-                  </div>
                 </div>
 
                 <div className="border-t border-gray-200 px-4 py-6">
-                  <a href="#" className="-m-2 flex items-center p-2">
+                  <a href="/" className="-m-2 flex items-center p-2">
                     <img
                       src="https://tailwindui.com/img/flags/flag-canada.svg"
                       alt=""
@@ -221,16 +215,19 @@ export default function Navigation() {
       </Transition.Root>
 
       <header className="relative bg-white">
-        <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+        <p
+          className="flex h-10 items-center justify-center  px-4 text-sm font-medium text-white sm:px-6 lg:px-8"
+          style={{ backgroundColor: "#9155fd" }}
+        >
           Get free delivery on orders over ₹100
         </p>
 
         <nav aria-label="Top" className="mx-auto">
           <div className="border-b border-gray-200">
-            <div className="flex h-16 items-center">
+            <div className="flex h-16 items-center px-11">
               <button
                 type="button"
-                className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
+                className="rounded-md bg-white p-2 text-gray-400 lg:hidden"
                 onClick={() => setOpen(true)}
               >
                 <span className="sr-only">Open menu</span>
@@ -239,20 +236,18 @@ export default function Navigation() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
-                  <span className="sr-only">Your Company</span>
-                  <img
-                    className="h-8 w-8 mr-2"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    alt=""
-                  />
-                </a>
+                <span className="sr-only">Your Company</span>
+                <img
+                  src="https://res.cloudinary.com/ddkso1wxi/image/upload/v1675919455/Logo/Copy_of_Zosh_Academy_nblljp.png"
+                  alt="Shopwithzosh"
+                  className="h-8 w-8 mr-2"
+                />
               </div>
 
               {/* Flyout menus */}
               <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch z-10">
                 <div className="flex h-full space-x-8">
-                  {navigation.categories.map((category) => (
+                  {navigationData.categories.map((category) => (
                     <Popover key={category.name} className="flex">
                       {({ open, close }) => (
                         <>
@@ -329,6 +324,7 @@ export default function Navigation() {
                                           >
                                             {section.name}
                                           </p>
+                                          {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
                                           <ul
                                             role="list"
                                             aria-labelledby={`${section.name}-heading`}
@@ -368,7 +364,7 @@ export default function Navigation() {
                     </Popover>
                   ))}
 
-                  {navigation.pages.map((page) => (
+                  {navigationData.pages.map((page) => (
                     <a
                       key={page.name}
                       href={page.href}
@@ -385,34 +381,33 @@ export default function Navigation() {
                   {true ? (
                     <div>
                       <Avatar
-                        className="text=white"
+                        className="text-white"
                         onClick={handleUserClick}
                         aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        //onclick={handleuserClick}
+                        // onClick={handleUserClick}
                         sx={{
                           bgcolor: deepPurple[500],
                           color: "white",
                           cursor: "pointer",
                         }}
                       >
-                        {/* Aavtar Image */}N
+                        N
                       </Avatar>
 
                       <Menu
                         id="basic-menu"
-                        anchorEl={anchorE1}
+                        anchorEl={anchorEl}
                         open={openUserMenu}
                         onClose={handleCloseUserMenu}
                         MenuListProps={{
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={handleCloseUserMenu}>
-                          Profile
-                        </MenuItem>
-                        <MenuItem>My Orders</MenuItem>
+                        <MenuItem>Profile</MenuItem>
+
+                        <MenuItem onClick={()=>navigate("/account/order")}>My Orders</MenuItem>
                         <MenuItem>Logout</MenuItem>
                       </Menu>
                     </div>
@@ -421,7 +416,7 @@ export default function Navigation() {
                       onClick={handleOpen}
                       className="text-sm font-medium text-gray-700 hover:text-gray-800"
                     >
-                      SignIn
+                      Signin
                     </Button>
                   )}
                 </div>
@@ -445,7 +440,7 @@ export default function Navigation() {
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                      0
+                      2
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
                   </Button>

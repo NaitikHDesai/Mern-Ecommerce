@@ -31,6 +31,7 @@ export const filters = [
       { value: "S", label: "S" },
       { value: "M", label: "M" },
       { value: "L", label: "L" },
+      { value: "XL", label: "XL" },
     ],
   },
 ];
@@ -48,7 +49,7 @@ export const singleFilter = [
     ],
   },
   {
-    id: "disccout",
+    id: "discout",
     name: "Discount Range",
     options: [
       {

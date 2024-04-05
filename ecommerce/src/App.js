@@ -1,18 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
-import Navigation from './customer/components/Navigation/Navigation';
-import HomePage from './customer/pages/HomePage';
-import Footer from './customer/components/Footer/Footer';
-import Product from './customer/components/Product/Product';
+import Navigation from './Customer/Components/Navigation/Navigation';
+import HomePage from './Customer/Pages/HomePage/HomePage';
+import Footer from './Customer/Components/Footer/Footer';
+import {Routes,Route} from 'react-router-dom';
+import CustomerRoutes from './Routers/CustomerRoutes';
 function App() {
   return (
-    <div className="App">
-      <Navigation/>
-      <div>
-        {/*<HomePage/>*/}
-        <Product/>
-      </div>
-      <Footer/>
+    <div className="">
+      <Routes>
+        <Route path="/*" element={<CustomerRoutes />} />
+      </Routes>
     </div>
   );
 }
