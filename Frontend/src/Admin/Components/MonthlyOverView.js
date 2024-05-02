@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -17,21 +16,16 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { findProducts } from "../../State/Products/Action";
 import { getOrders } from "../../State/Admin/Order/Action";
+import { getAllUsers } from "../../State/Auth/Action";
 
 function MonthlyOverView() {
   const dispatch = useDispatch();
-  const { customersProduct } = useSelector((store) => store);
+  const { customersProduct, auth } = useSelector((store) => store);
   const { adminOrder } = useSelector((store) => store);
 
   const [salesData, setSalesData] = useState([
     {
-      stats: "245K",
-      title: "Sales",
-      color: "#E5D68A",
-      icon: <TrendingUpIcon sx={{ fontSize: "1.75rem" }} />,
-    },
-    {
-      stats: "45K",
+      stats: "",
       title: "Customer",
       color: "#22CB5C",
       icon: <AccountCircleIcon sx={{ fontSize: "1.75rem" }} />,
@@ -68,6 +62,7 @@ function MonthlyOverView() {
 
   useEffect(() => {
     dispatch(getOrders());
+    dispatch(getAllUsers());
   }, []);
 
   useEffect(() => {
@@ -77,7 +72,7 @@ function MonthlyOverView() {
       productsCount > 1000
         ? `${Math.floor(productsCount / 1000)}k`
         : productsCount;
-    updatedSalesData[2].stats = formattedStats;
+    updatedSalesData[1].stats = formattedStats;
     setSalesData(updatedSalesData);
   }, [customersProduct.products]);
 
@@ -88,17 +83,27 @@ function MonthlyOverView() {
         (total, order) => total + order.totalDiscountedPrice,
         0
       );
-      console.log(totalRevenue)
       const formattedPriceStats =
         totalRevenue > 1000 ? `${(totalRevenue / 1000).toFixed(2)}` : totalRevenue.toFixed(1);
-      updatedSalesData[3].stats = `${formattedPriceStats}K`;
+      updatedSalesData[2].stats = `${formattedPriceStats}K`;
       setSalesData(updatedSalesData);
     }
   }, [adminOrder.orders]);
 
+
+  useEffect(() => {
+    if (auth.users) {
+      const updatedSalesData = [...salesData];
+      const customerUsers = auth.users.filter(user => user.role === "Customer");
+      const customerCount = customerUsers.length;
+      updatedSalesData[0].stats = customerCount;
+      setSalesData(updatedSalesData);
+    }
+  }, [auth.users]);
+
   const renderStats = () => {
     return salesData.map((item, index) => (
-      <Grid item xs={12} sm={3} key={index}>
+      <Grid item xs={12} sm={4} key={index}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar
             variant="rounded"
@@ -123,17 +128,17 @@ function MonthlyOverView() {
   };
 
   return (
-    <Card sx={{ backgroundColor: "#242B2E", color: "white" }}>
+    <Card >
       <CardHeader
         title="Overall View"
         action={
-          <IconButton size="small">
+          <IconButton size="small" aria-label='settings' className='card-more-options' sx={{ color: 'text.secondary' }}>
             <MoreVertIcon />
           </IconButton>
         }
         subheader={
           <Typography variant="body2">
-            <Box component="span" sx={{ fontWeight: 600 }}>
+            <Box component="span" sx={{ fontWeight: 600,color:'text.primary' }}>
               Total 48.5% growth
             </Box>
             😎 this month

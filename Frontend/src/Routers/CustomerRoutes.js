@@ -18,6 +18,7 @@ import RateProduct from "../Customer/Components/ReviewProduct/RateProduct";
 function CustomerRoutes() {
   const location=useLocation();
 
+  
   const showNavigation=location.pathname !=="*";
   return (
     <div>

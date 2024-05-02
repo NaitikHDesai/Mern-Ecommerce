@@ -46,7 +46,7 @@ const product = {
     { name: "M", inStock: true },
     { name: "L", inStock: true },
     { name: "XL", inStock: true },
-    // { name: "2XL", inStock: true },
+     {name: "XXL", inStock: true },
     // { name: "3XL", inStock: true },
   ],
   description:
@@ -92,9 +92,11 @@ function ProductDetails() {
 
   useEffect(() => {
     const data = { productId: params.productId };
+    console.log(data);
     dispatch(findProductsById(data));
   }, [params.productId]);
 
+  
   return (
     <div className="bg-white lg:px-20">
       <div className="pt-6">
@@ -192,6 +194,7 @@ function ProductDetails() {
               {/* Reviews */}
               <div className="mt-6">
                 <div className="flex items-center space-x-3">
+                  
                   <Rating
                     name="read-only"
                     value={3.5}
@@ -226,7 +229,7 @@ function ProductDetails() {
                     <RadioGroup.Label className="sr-only">
                       Choose a size
                     </RadioGroup.Label>
-                    <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+                    <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-5">
                       {product.sizes.map((size) => (
                         <RadioGroup.Option
                           key={size.name}
@@ -287,7 +290,7 @@ function ProductDetails() {
                   </RadioGroup>
                 </div>
                 <Button
-                  sx={{ px: "2rem", py: "1rem", bgcolor: "#9155fd" }}
+                  sx={{ px: "1.5rem", py: "1rem", bgcolor: "#9155fd" }}
                   variant="contained"
                   onClick={handleAddToCart}
                 >
@@ -324,20 +327,22 @@ function ProductDetails() {
                 </div>
               </div>
 
-              <div className="mt-10">
+              {/* <div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
                 <div className="mt-4 space-y-6">
                   <p className="text-sm text-gray-600">{product.details}</p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
 
         {/* Recent Raiting and reviews */}
         <section>
-          <h1 className="font-bold text-lg pb-4">Recent Review & Ratings</h1>
+          <h1 className="font-bold text-lg pb-4">
+            Recent Review & Ratings
+            </h1>
           <div className="broder p-5">
             <Grid container spacing={7}>
               <Grid item xs={7}>

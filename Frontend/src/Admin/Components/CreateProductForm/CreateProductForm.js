@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { createProduct } from '../../../State/Products/Action';
 import { Button, FormControl, Grid, InputLabel, Menu, MenuItem, Select, TextField, Typography } from '@mui/material';
+import "./CreateProductForm.css";
 
 const thirdLevelCategories = {
   men: {
@@ -102,6 +103,7 @@ const initialSizes=[
   {name:'XXL',quantity:0},
 ]
 function CreateProductForm() {
+
   const [productData,setProductData]=useState({
     imageUrl:"",
     brand:"",
@@ -117,6 +119,7 @@ function CreateProductForm() {
     thirdLavelCategory:"",
     description:"",
   });
+
   const dispatch=useDispatch();
   const [totalSizeQuantity, setTotalSizeQuantity] = useState(0); // State to track total size quantity
  
@@ -159,14 +162,12 @@ function CreateProductForm() {
   
 
   return (
-    <div className='p-10'  >
-      <Typography variant='h3' sx={{textAlign:'center'}} className='py-10 text-center'>
-        Add New Product
-      </Typography>
-      <form 
-      onSubmit={handleSubmit}
-      className=' min-h-screen'>
-        <Grid container spacing={2}>
+    <div className="createProductContainer" style={{ backgroundColor: '#0D0D22' ,color:'white' }} >
+    <Typography variant="h3" sx={{ textAlign: 'center' }} className="py-10 text-center">
+      Add New Product
+    </Typography>
+    <form onSubmit={handleSubmit} className="createProductForm min-h-screen">
+      <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField 
             fullWidth
@@ -174,6 +175,8 @@ function CreateProductForm() {
             name='imageUrl'
             value={productData.imageUrl}
             onChange={handleChange}
+            required
+            
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -183,6 +186,7 @@ function CreateProductForm() {
             name='brand'
             value={productData.brand}
             onChange={handleChange}
+            required
             />
           </Grid>
 
@@ -193,16 +197,18 @@ function CreateProductForm() {
             name='title'
             value={productData.title}
             onChange={handleChange}
+            required
             />
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <TextField 
-            fullWidth
-            label="Color"
-            name='color'
-            value={productData.color}
-            onChange={handleChange}
+            <TextField
+              fullWidth
+              label="Color"
+              name="color"
+              value={productData.color}
+              onChange={handleChange}
+              required
             />
           </Grid>
 
@@ -215,6 +221,8 @@ function CreateProductForm() {
             value={productData.quantity}
             onChange={handleChange}
             type='number'
+            required
+
             />
           </Grid>
 
@@ -227,6 +235,7 @@ function CreateProductForm() {
             value={productData.price}
             onChange={handleChange}
             type='number'
+            required
             />
           </Grid>
 
@@ -239,6 +248,7 @@ function CreateProductForm() {
             value={productData.discountedPrice}
             onChange={handleChange}
             type='number'
+            required
             />
           </Grid>
 
@@ -251,6 +261,7 @@ function CreateProductForm() {
             value={productData.discountPersent}
             onChange={handleChange}
             type='number'
+            required
             />
           </Grid>
 
@@ -323,7 +334,6 @@ function CreateProductForm() {
                 label="Size Name"
                 name='name'
                 onChange={(event)=>handleSizeChange(event,index)}
-                required
                 value={size.name}
             />
             </Grid>
@@ -335,7 +345,7 @@ function CreateProductForm() {
                 name='size_quantity'
                 type='number'
                 onChange={(event)=>handleSizeChange(event,index)}
-                required
+                
             />
             </Grid>
             
@@ -354,7 +364,9 @@ function CreateProductForm() {
 
         </Grid>
       </form>
+  
     </div>
+   
   )
 }
 

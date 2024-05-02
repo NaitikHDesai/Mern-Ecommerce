@@ -12,7 +12,9 @@ function LoginForm({ handleNext }) {
   const jwt = localStorage.getItem("jwt");
   const [openSnackBar, setOpenSnackBar] = useState(false);
 
-  const handleCloseSnakbar = () => setOpenSnackBar(false);
+  const handleClose = () => {
+    setOpenSnackBar(false);
+  };
 
   useEffect(() => {
     if (jwt) {
@@ -28,16 +30,13 @@ function LoginForm({ handleNext }) {
       email: data.get("email"),
       password: data.get("password"),
     };
+    console.log("login user", userData);
+    setOpenSnackBar(true);
     dispatch(login(userData));
-    console.log("userData", userData);
   };
 
-  useEffect(() => {
-    if (auth.user || auth.error) setOpenSnackBar(true);
-  }, [auth.user]);
-
   return (
-    <Fragment className="shadow-lg">
+    <div className="shadow-lg">
       <form className="w-full" onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -92,17 +91,17 @@ function LoginForm({ handleNext }) {
       <Snackbar
         open={openSnackBar}
         autoHideDuration={6000}
-        onClose={handleCloseSnakbar}
+        onClose={handleClose}
       >
         <Alert
-          onClose={handleCloseSnakbar}
-          severity="success"
+          onClose={handleClose}
+          severity={auth.error ? "error" : "success"}
           sx={{ width: "100%" }}
         >
-          {auth.error ? auth.error : auth.user ? "Register Success" : ""}
+          {auth.error ? auth.error : auth.message}
         </Alert>
-      </Snackbar>
-    </Fragment>
+        </Snackbar>
+    </div>
   );
 }
 

@@ -11,6 +11,9 @@ import Typography from '@mui/material/Typography'
 import TableContainer from '@mui/material/TableContainer'
 import { Avatar, CardHeader, Pagination } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { getAllUsers } from '../../State/Auth/Action'
 
 const rows = [
   {
@@ -96,9 +99,19 @@ const rows = [
 
 const CustomersTable = () => {
   const navigate=useNavigate();
+  const {auth}=useSelector((store)=>store);
+  const dispatch=useDispatch();
+
   function handlePaginationChange(event, value) {
     console.log("Current page:", value);
   }
+
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, []);
+  
+  const CustomerUser=auth.users.filter(user=>user.role==="Customer");
+
   return (
     <Box>
          <Card>
@@ -111,31 +124,28 @@ const CustomersTable = () => {
         <Table sx={{ minWidth: 390 }} aria-label='table in dashboard'>
           <TableHead>
             <TableRow>
-            <TableCell>User Id</TableCell>
-            <TableCell>Image</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+            <TableCell align="left">User Id</TableCell>
+                <TableCell align="left">Name</TableCell>
+                <TableCell align="left">Email</TableCell>
+                <TableCell align="left">Role</TableCell>
               
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(0,10).map((item,index) => (
-              <TableRow hover key={item.name} sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
-                <TableCell>{index+1}</TableCell>
-                <TableCell> <Avatar alt={item.name} src={item.image} /> </TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.email}</TableCell>
-                
-                
-               
-               
-              </TableRow>
+            
+            {CustomerUser.map((item,index) => (
+               <TableRow key={item._id} hover sx={{ '&:last-of-type td, &:last-of-type th': { border: 0 } }}>
+               <TableCell align="left">{item._id}</TableCell>
+               <TableCell align="left">{item.firstName} {item.lastName}</TableCell>
+               <TableCell align="left">{item.email}</TableCell>
+               <TableCell align="left">{item.role}</TableCell>
+             </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
     </Card>
-    <Card className="mt-2 felx justify-center items-center">
+    <Card className="mt-2 flex justify-center items-center">
         <Pagination
           className="py-5 w-auto"
           size="large"

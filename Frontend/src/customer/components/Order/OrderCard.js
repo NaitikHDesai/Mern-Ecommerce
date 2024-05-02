@@ -3,11 +3,20 @@ import { Box, Grid } from "@mui/material";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import AdjustIcon from "@mui/icons-material/Adjust";
 import { useNavigate } from "react-router-dom";
-
 import StarIcon from "@mui/icons-material/Star";
+
 function OrderCard({ item, order }) {
   const navigate = useNavigate();
-  console.log(order)
+
+  const formatDate = (dateString) => {
+    const options = { month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const currentDate = new Date();
+  const deliveryDate = new Date(order?.deliveryDate);
+  const isDelivered = currentDate > deliveryDate;
+
   return (
     <Box className="p-5 shadow-lg hover:shadow-2xl border">
       <Grid spacing={2} container sx={{ justifyContent: "space-between" }}>
@@ -38,13 +47,13 @@ function OrderCard({ item, order }) {
 
         <Grid item xs={4}>
           <p className="space-y-2 font-semibold">
-            {order?.orderStatus === "DELIVERED" ? (
+            {isDelivered ? (
               <>
                 <FiberManualRecordIcon
                   sx={{ width: "15px", height: "15px" }}
                   className="text-green-600 p-0 mr-2 text-sm"
                 />
-                <span>Delivered on March 03</span>
+                <span>Delivered on {formatDate(order?.deliveryDate)}</span>
               </>
             ) : (
               <>
@@ -52,16 +61,22 @@ function OrderCard({ item, order }) {
                   sx={{ width: "15px", height: "15px" }}
                   className="text-green-600 p-0 mr-2 text-sm"
                 />
-                <span>Expected Delivery On Mar 03</span>
+                <span>
+                  Expected Delivery On {formatDate(order.deliveryDate)}
+                </span>
               </>
             )}
           </p>
 
-          <p className=" text-xs">Your Item Has Been Delivered</p>
+          <p className=" text-xs">
+            {isDelivered
+              ? "Your item has been delivered"
+              : "Your item is on its way"}
+          </p>
 
-          {item.orderStatus === "DELIVERED" && (
+          {isDelivered && (
             <div
-              onClick={() => navigate(`/account/rate/{id}`)}
+              onClick={() => navigate(`/account/rate/${order?._id}`)}
               className="flex items-center text-blue-600 cursor-pointer"
             >
               <StarIcon sx={{ fontSize: "2rem" }} className="px-2 text-5xl" />

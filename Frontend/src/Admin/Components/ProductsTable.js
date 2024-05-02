@@ -67,7 +67,7 @@ function ProductsTable() {
       disccout: null,
       sort: sort || "price_low",
       pageNumber: page || 1,
-      pageSize: 5,
+      pageSize: 10,
       stock:availability,
     };
     dispatch(findProducts(data));

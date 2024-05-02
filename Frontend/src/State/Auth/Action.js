@@ -1,6 +1,9 @@
 import axios from "axios";
 import { API_BASE_URL, api } from "../../config/apiConfig";
 import {
+  GET_ALL_USER_FAILURE,
+  GET_ALL_USER_REQUEST,
+  GET_ALL_USER_SUCCESS,
   GET_USER_FAILURE,
   GET_USER_REQUEST,
   GET_USER_SUCCESS,
@@ -16,7 +19,11 @@ import {
 const token = localStorage.getItem("jwt");
 
 const registerRequest = () => ({ type: REGISTER_REQUEST });
-const registerSuccess = (user) => ({ type: REGISTER_SUCCESS, payload: user });
+const registerSuccess = (user, message) => ({
+  type: REGISTER_SUCCESS,
+  payload: { user, message },
+});
+
 const registerFailure = (error) => ({ type: REGISTER_FAILURE, payload: error });
 
 export const register = (userData) => async (dispatch) => {
@@ -25,18 +32,23 @@ export const register = (userData) => async (dispatch) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signup`, userData);
     const user = response.data;
-    if (user.jwt) {
-      localStorage.setItem("jwt", user.jwt);
-    }
+
+    dispatch(registerSuccess(user, response.data.message));
+
+    // if (user.jwt) {
+    //   localStorage.setItem("jwt", user.jwt);
+    // }
     console.log("user :", user);
-    dispatch(registerSuccess(user.jwt));
   } catch (error) {
     dispatch(registerFailure(error.message));
   }
 };
 
 const loginRequest = () => ({ type: LOGIN_REQUEST });
-const loginSuccess = (user) => ({ type: LOGIN_SUCCESS, payload: user });
+const loginSuccess = (user, message) => ({
+  type: LOGIN_SUCCESS,
+  payload: { user, message },
+});
 const loginFailure = (error) => ({ type: LOGIN_FAILURE, payload: error });
 
 export const login = (userData) => async (dispatch) => {
@@ -49,8 +61,8 @@ export const login = (userData) => async (dispatch) => {
       localStorage.setItem("jwt", user.jwt);
     }
 
-    console.log("user :", user);
-    dispatch(loginSuccess(user.jwt));
+    console.log("Login response:", response); // Log response here
+    dispatch(loginSuccess(user.jwt, response.data.message));
   } catch (error) {
     dispatch(loginFailure(error.message));
   }
@@ -77,7 +89,21 @@ export const getUser = (jwt) => async (dispatch) => {
   }
 };
 
-export const logout = (token) => (dispatch) => {
-  dispatch({ type: LOGOUT, payload: null });
-  localStorage.clear();
+export const getAllUsers = () => async (dispatch) => {
+  dispatch({ type: GET_ALL_USER_REQUEST });
+  try {
+    const response = await api.get(`/api/users`);
+    console.log(response.data);
+    const user = response.data;
+    dispatch({ type: GET_ALL_USER_SUCCESS, payload: user });
+  } catch (error) {
+    dispatch({ type: GET_ALL_USER_FAILURE, payload: error.message });
+  }
 };
+export const logout = (token) => {
+    return async (dispatch) => {
+      dispatch({ type: LOGOUT });
+      localStorage.clear();
+      
+    };
+  };

@@ -42,10 +42,11 @@ function DeliveryAddressForm({handleNext}) {
             className="p-5 py-7 border-b cursor-pointer">
               {/* {console.log("Address Item:", item)} */}
               <AddressCard address={item}/>
-              {selectedAddress?.id === item._id && (<Button
+              {selectedAddress?._id === item._id && (<Button
               sx={{ mt: 2, bgcolor: "RGB(145 85 253)" }}
               size="large"
               variant="contained"
+              onClick={()=>handleCreateOrder(item)}
             >
               Deliver Here
             </Button>

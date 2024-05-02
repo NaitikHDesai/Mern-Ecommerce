@@ -1,29 +1,28 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
-  Divider,
   Grid,
   Rating,
   TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import AdjustIcon from "@mui/icons-material/Adjust";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import CustomerRoutes from "../../../Routers/CustomerRoutes";
 import { findProductsById } from "../../../State/Products/Action";
-import { createReview } from "../../../State/Review/Action";
+import { createRating, createReview } from "../../../State/Review/Action";
 
-const RateProduct = () => {
+const RateProduct = ({orderId}) => {
   const [formData, setFormData] = useState({ title: "", description: "" });
   const [rating, setRating] = useState();
   const isLargeScreen = useMediaQuery("(min-width:1200px)");
   const dispatch = useDispatch();
-  const { customersProduct } = useSelector((store) => store);
+  const { customersProduct, order } = useSelector((store) => store);
   const { productId } = useParams();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleRateProduct = (e, value) => {
     console.log("rating ----- ", value);
@@ -37,20 +36,33 @@ const RateProduct = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+const handleSubmit = (event) => {
+  event.preventDefault();
 
-    console.log(formData);
-    // You can customize this handler to handle the form data as needed
+  // Dispatch createReview action
+  dispatch(createReview({ title: formData.title, description: formData.description, productId }));
 
-    dispatch(createReview({review:formData.title,productId}))
-    setFormData({title:"",description:""})
-    navigate(`/product/${productId}`)
+  // Dispatch createRating action
+  dispatch(createRating({ rating, productId }));
 
-  };
+  // Reset form data
+  setFormData({ title: "", description: "" });
+
+  // Navigate back to the product page
+  navigate(`/product/${productId}`);
+};
+
   useEffect(() => {
     dispatch(findProductsById({ productId }));
   }, []);
+
+  const formatDate = (dateString) => {
+    const options = { month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const isDelivered = order && order.deliveryDate && new Date(order.deliveryDate) < new Date();
+
   return (
     <div className="px-5 lg:px-20">
       <h1 className="text-xl p-5 shadow-lg mb-8 font-bold">
@@ -76,26 +88,55 @@ const RateProduct = () => {
               {customersProduct.product?.brand}
             </p>
             <p>₹{customersProduct.product?.price}</p>
-            <p>Size: Free</p>
-           {customersProduct.product?.color && <p>Color: {customersProduct.product?.color}</p>}
-            <div className="flex items-center space-x-3">
-              <Rating name="read-only" value={4.6} precision={0.5} readOnly />
-
+            <p>Size: {customersProduct.product?.size?.name || "FREE"}</p>
+            {customersProduct.product?.color && (
+              <p>Color: {customersProduct.product?.color}</p>
+            )}
+            {/* <div className="flex items-center space-x-3">
+              <Rating
+                name="read-only"
+                value={4.6}
+                precision={0.5}
+                readOnly
+              />
               <p className="opacity-60 text-sm">42807 Ratings</p>
               <p className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
                 {3789} reviews
               </p>
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
               <p className="space-y-2 font-semibold">
-                <FiberManualRecordIcon
-                  sx={{ width: "15px", height: "15px" }}
-                  className="text-green-600  mr-2"
-                />
-                <span>Delivered On Mar 03</span>{" "}
+                {isDelivered ? (
+                  <>
+                    <FiberManualRecordIcon
+                      sx={{ width: "15px", height: "15px" }}
+                      className="text-green-600  mr-2"
+                    />
+                    <span>
+                      Delivered On{" "}
+                      {formatDate(order?.deliveryDate)}
+                    </span>{" "}
+                  </>
+                ) : (
+                  <>
+                    <AdjustIcon
+                      sx={{ width: "15px", height: "15px" }}
+                      className="text-green-600 mr-2"
+                    />
+                    <span>
+                      Expected Delivery On{" "}
+                      {formatDate(order.deliveryDate)}
+                    </span>
+                  </>
+                )}
               </p>
-              <p className="text-xs">Your Item Has Been Delivered</p>
-            </div>
+              <p className="text-xs">
+                Your Item Has Been{" "}
+                {order.deliveryDate
+                  ? "Delivered"
+                  : "Dispatched"}
+              </p>
+            </div> */}
           </div>
         </Grid>
         <Grid item xs={12} lg={6}>

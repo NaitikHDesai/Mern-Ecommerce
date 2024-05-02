@@ -8,6 +8,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ThemeProvider,
   Toolbar,
   useMediaQuery,
   useTheme,
@@ -22,7 +23,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-
+import { customTheme } from "./theme/customeTheme";
 import { getUser, logout } from "../State/Auth/Action";
 import OrdersTable from "./Components/OrdersTable";
 import CustomersTable from "./Components/CustomersTable";
@@ -31,7 +32,8 @@ import CreateProductForm from "./Components/CreateProductForm/CreateProductForm"
 import ProductsTable from "./Components/ProductsTable";
 import { useDispatch, useSelector } from "react-redux";
 import { deepPurple } from "@mui/material/colors";
-
+import AdminNavbar from './Components/Navigation/AdminNavBar'
+import OrderView from "./Components/OrderView";
 const drawerWidth = 240;
 const menu = [
   { name: "Dashboard", path: "/admin", icon: <DashboardIcon /> },
@@ -46,14 +48,12 @@ function Admin() {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const [sideBarVisible, setSideBarVisible] = useState(false);
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  const {auth}=useSelector((store)=>store);
+  const dispatch = useDispatch();
+  const { auth } = useSelector((store) => store);
 
   const handleLogout = () => {
-   
     dispatch(logout());
-    navigate("/")
-
+    navigate("/");
   };
 
   const jwt = localStorage.getItem("jwt");
@@ -72,43 +72,39 @@ function Admin() {
         flexDirection: "column",
         justifyContent: "space-between",
         // border: "1px solid blue",
-        
       }}
     >
-      <>
-        {isLargeScreen && <Toolbar />}
-        <List>
-          {menu.map((item, index) => (
-            <ListItem
-              key={item.name}
-              disablePadding
-              onClick={() => navigate(item.path)}
-            >
-              <ListItemButton>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText>{item.name}</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </>
+      {isLargeScreen && <Toolbar />}
+      <List>
+        {menu.map((item, index) => (
+          <ListItem
+            key={item.name}
+            disablePadding
+            onClick={() => navigate(item.path)}
+          >
+            <ListItemButton>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText>{item.name}</ListItemText>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
 
       <List sx={{ position: "absolute", bottom: 0, width: "100%" }}>
-        <Divider/>
+        <Divider />
         <ListItem onClick={handleLogout} disablePadding>
           <ListItemButton>
-          <Avatar
-                        className="text-white"
-                        onClick={handleLogout}
-                       
-                        sx={{
-                          bgcolor: deepPurple[500],
-                          color: "white",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {auth.user?.firstName[0].toUpperCase()}
-                      </Avatar>
+            <Avatar
+              className="text-white"
+              onClick={handleLogout}
+              sx={{
+                bgcolor: deepPurple[500],
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              {auth.user?.firstName[0].toUpperCase()}
+            </Avatar>
             <ListItemText className="ml-5" primary={"Logout"}></ListItemText>
           </ListItemButton>
         </ListItem>
@@ -127,27 +123,53 @@ function Admin() {
   const drawerVariant = isLargeScreen ? "permanent" : "temporary";
 
   return (
-    
-      <div className=" relative flex h-[100vh]  ">
-        <CssBaseline />
-        <div className="w-[15%] border border-gray-300 h-full  fixed  top-0">
-            {drawer}
-            </div>
+    <ThemeProvider theme={customTheme}>
+         <AdminNavbar handleSideBarViewInMobile={handleSideBarViewInMobile} />
 
-        <div className="w-[85%] h-full ml-[15%]">
+      <Box sx={{ display: `${isLargeScreen ? "flex" : "block"}` }}>
+        <CssBaseline />
+        <Drawer
+          variant={drawerVariant}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: "border-box",
+              ...(drawerVariant === "temporary" && {
+                top: 0,
+                [`& .MuiPaper-root.MuiDrawer-paperAnchorTop.MuiDrawer-paperTemporary`]:
+                  {
+                    position: "fixed",
+                    left: 0,
+                    right: 0,
+                    height: "100%",
+                    zIndex: (theme) => theme.zIndex.drawer + 2,
+                  },
+              }),
+            },
+          }}
+          open={isLargeScreen || sideBarVisible}
+          onClose={handleCloseSideBar}
+        >
+          {drawer}
+        </Drawer>
+        <Box className="adminContainer" component="main" sx={{ flexGrow: 1 }}>
+          <Toolbar />
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/product/create" element={<CreateProductForm />} />
 
-            <Route path="/products" element={<ProductsTable/>} />
+            <Route path="/products" element={<ProductsTable />} />
 
             <Route path="/orders" element={<OrdersTable />} />
+            <Route path="/orders/:orderId" element={<OrderView />} />
 
             <Route path="/customers" element={<CustomersTable />} />
           </Routes>
-        </div>
-      </div>
-    
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
 

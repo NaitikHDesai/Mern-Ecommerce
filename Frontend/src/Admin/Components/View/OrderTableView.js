@@ -10,9 +10,11 @@ import {
 import {
   Avatar,
   AvatarGroup,
+  Box,
   Button,
   Card,
   CardHeader,
+  Chip,
   Menu,
   MenuItem,
   Paper,
@@ -22,10 +24,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function OrdersTableView() {
-
+  const navigate=useNavigate();
   const [anchorElArray, setAnchorElArray] = useState([]);
   const dispatch = useDispatch();
   const { adminOrder } = useSelector((store) => store);
@@ -66,28 +70,50 @@ function OrdersTableView() {
     dispatch(deleteOrder(orderId));
   };
   return (
-    <div className="p-10">
-      <Card className="mt-2">
-        <CardHeader title="Recent Orders" />
+      <Card >
+        <CardHeader title="Recent Orders" 
+        sx={{
+          pt:2,
+          alignItems:"center",
+          "& .MuiCardHeader-action": { mt: 0.6 },
+        }}
+        action={
+          <Typography
+           onClick={()=>navigate("/admin/orders")}
+           variant="caption"
+           sx={{color:"blue",cursor:"pointer",paddingRight:".8rem"}}
+           >
+            View All
+           </Typography>
+        }
+        titleTypographyProps={{
+          variant:'h5',
+          sx:{
+            lineHeight:"1.6 !important",
+            letterSpacing:"0.15px !important",
+          },
+        }}
+        />
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer >
+          <Table sx={{ minWidth:800 }} aria-label="table in dashboard">
             <TableHead>
               <TableRow>
                 <TableCell>Image</TableCell>
-                <TableCell align="left">Title</TableCell>
-                <TableCell align="left">Id</TableCell>
-                <TableCell align="left">Price</TableCell>
-                <TableCell align="left">Status</TableCell>
+                <TableCell >Title</TableCell>
+                <TableCell >Order Id</TableCell>
+                <TableCell >Price</TableCell>
+                <TableCell >Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {adminOrder?.orders?.map((item, index) => (
                 <TableRow
+                hover
                   key={item.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell align="left" className="">
+                  <TableCell >
                     <AvatarGroup max={3} sx={{ justifyContent: "start" }}>
                       {item.orderItems.map((orderitem) => (
                         <Avatar src={orderitem?.product?.imageUrl}></Avatar>
@@ -95,30 +121,27 @@ function OrdersTableView() {
                     </AvatarGroup>
                   </TableCell>
 
-                  <TableCell align="left" scope="row">
-                    {item.orderItems.map((orderitem) => (
+                  <TableCell  sx={{ py: (theme) => `${theme.spacing(0.5)} !important` }}>
+                    <Box sx={{display:"flex",flexDirection:'column'}}>
+                      <Typography   sx={{ fontWeight: 500, fontSize: "0.875rem !important" }}>
+                      {item.orderItems.map((orderitem) => (
                       <p>{orderitem.product?.title}</p>
                     ))}
+                      </Typography>
+                      <Typography variant="caption">{item.brand}</Typography>
+                    </Box>
                   </TableCell>
-                  <TableCell align="left">{item._id}</TableCell>
-                  <TableCell align="left">{item.totalDiscountedPrice}</TableCell>
-                  <TableCell align="left">
-                    <span
-                      className={`text-white px-5 py-2 rounded-full ${
-                        item.orderStatus === "CONFIRMED"
-                          ? "bg-[#369236]"
-                          : item.orderStatus === "SHIPPED"
-                          ? "bg-[#4141ff]"
-                          : item.orderStatus === "PLACED"
-                          ? "bg-[#03B290]"
-                          : item.orderStatus === "PENDING"
-                          ? "bg-[gray]"
-                          : "bg-[#c879f6]"
-                      }`}
-                    >
-                      {item.orderStatus}
-                    </span>
-                  </TableCell>
+                  <TableCell >{item._id}</TableCell>
+                  <TableCell >{item.totalDiscountedPrice}</TableCell>
+                  <TableCell>
+                  <Chip
+                    sx={{ color: "white" }}
+                    label="PLACED"
+                    size="small"
+                    color="success"
+                    className="text-white"
+                  />
+                </TableCell>
 
                 </TableRow>
               ))}
@@ -126,7 +149,7 @@ function OrdersTableView() {
           </Table>
         </TableContainer>
       </Card>
-    </div>
+    
   );
 }
 

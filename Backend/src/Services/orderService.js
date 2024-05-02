@@ -1,7 +1,7 @@
 const Address = require("../models/AddressModels");
 const Order = require("../models/orderModels");
 const cartService = require("./cartService");
-const OrderItemModule=require("../models/orderItemsModels")
+const OrderItemModule = require("../models/orderItemsModels");
 
 async function createOrder(user, shipAddress) {
   let address;
@@ -30,23 +30,30 @@ async function createOrder(user, shipAddress) {
       userId: item.userId,
       discountedPrice: item.discountedPrice,
     });
+
     const createdOrderItem = await orderItem.save();
     orderItems.push(createdOrderItem);
   }
+  
+  const deliveryDate = new Date();
+  deliveryDate.setDate(deliveryDate.getDate() + 15);
 
   const createdOrder = new Order({
     user,
     orderItems,
     totalPrice: cart.totalPrice,
     totalDiscountedPrice: cart.totalDiscountedPrice,
-    discounte:cart.discounte,
+    discounte: cart.discounte,
     totalItem: cart.totalItem,
     shippingAddress: address,
+    deliveryDate: deliveryDate,
   });
   const savedOrder = await createdOrder.save();
 
   return savedOrder;
 }
+
+
 
 async function placeOrder(orderId) {
   const order = await findOrderById(orderId);

@@ -6,6 +6,9 @@ import {
   FIND_PRODUCT_ID_FAILURE,
   FIND_PRODUCT_ID_REQUEST,
   FIND_PRODUCT_ID_SUCCESS,
+  GET_ALL_PRODUCTS_FAILURE,
+  GET_ALL_PRODUCTS_REQUEST,
+  GET_ALL_PRODUCTS_SUCCESS,
 } from "./ActionType";
 
 const initialState = {
@@ -18,10 +21,12 @@ const initialState = {
 
 export const customerProductReducer = (state = initialState, action) => {
   switch (action.type) {
+    case GET_ALL_PRODUCTS_REQUEST:
     case FIND_PRODUCTS_REQUEST:
     case FIND_PRODUCT_ID_REQUEST:
       return { ...state, loading: true, error: null };
 
+    case GET_ALL_PRODUCTS_SUCCESS:  
     case FIND_PRODUCTS_SUCCESS:
       return {
         ...state,
@@ -39,7 +44,7 @@ export const customerProductReducer = (state = initialState, action) => {
         error: null,
         deletedProducts:action.payload ,
       };
-
+    case GET_ALL_PRODUCTS_FAILURE:
     case FIND_PRODUCTS_FAILURE:
     case FIND_PRODUCT_ID_FAILURE:
       return { ...state, loading: false, error: action.payload };

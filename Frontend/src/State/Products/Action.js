@@ -12,6 +12,9 @@ import {
   FIND_PRODUCT_ID_FAILURE,
   FIND_PRODUCT_ID_REQUEST,
   FIND_PRODUCT_ID_SUCCESS,
+  GET_ALL_PRODUCTS_FAILURE,
+  GET_ALL_PRODUCTS_REQUEST,
+  GET_ALL_PRODUCTS_SUCCESS,
 } from "./ActionType";
 
 export const findProducts = (reqData) => async (dispatch) => {
@@ -91,3 +94,16 @@ export const deleteProduct = (productId) => async (dispatch) => {
     dispatch({ type: DELETE_PRODUCT_FAILURE, payload: error.message });
   }
 };
+
+
+export const getAllProdcuts=()=>async (dispatch)=>{
+  dispatch({type:GET_ALL_PRODUCTS_REQUEST});
+  try {
+
+    const response=await api.get(`/api/products`);
+    console.log("Products:",response.data);
+    dispatch({type:GET_ALL_PRODUCTS_SUCCESS,payload:response.data});
+  } catch (error) {
+    dispatch({type:GET_ALL_PRODUCTS_FAILURE,payload:error.message});
+  }
+}

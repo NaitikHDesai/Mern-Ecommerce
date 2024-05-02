@@ -21,7 +21,7 @@ const darkTheme1 = createTheme({
 
 function AdminDashboard() {
   return (
-    <div className='p-10'>
+    <div className='p-10' style={{ backgroundColor: '#0D0D22', color: 'white', minHeight: '100vh' }}>
         <Grid container spacing={3}>
             <Grid  item xs={12} md={4}>
                 <div className='shadow-lg shadow-gray-600'>

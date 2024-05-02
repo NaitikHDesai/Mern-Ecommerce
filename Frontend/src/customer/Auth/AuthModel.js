@@ -21,6 +21,7 @@ function AuthModel({ handleClose, open }) {
   const location = useLocation();
   const { auth } = useSelector((store) => store);
   const navigate = useNavigate();
+  
   useEffect(() => {
     if (auth.user) {
       handleClose();

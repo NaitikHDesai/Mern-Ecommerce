@@ -19,6 +19,7 @@ import {
   InputLabel,
   Menu,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   Table,
@@ -28,8 +29,9 @@ import {
   TableHead,
   TableRow,
   Typography,
+  colors,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function OrdersTable() {
   const navigate = useNavigate();
@@ -87,10 +89,14 @@ function OrdersTable() {
 
     setFormData({ ...formData, [name]: value });
   };
+
+  const handlePaginationChange = (event, value) => {
+    console.log("Current Page:", value);
+  };
+
   return (
     <Box>
-
-<Card className="p-3">
+      <Card className="p-3">
         <CardHeader
           title="Sort"
           sx={{
@@ -189,14 +195,16 @@ function OrdersTable() {
                         {item?.orderItems.map((order) => (
                           <span className="opacity-60">
                             {" "}
-                            {order.product?.brand},
+                            {order.product?.brand}
                           </span>
                         ))}
                       </Typography>
                     </Box>
                   </TableCell>
 
-                  <TableCell>{item?._id}</TableCell>
+                  <TableCell>
+                    <Link to={`/admin/orders/${item._id}`}>{item?._id}</Link>
+                  </TableCell>
                   <TableCell>{item?.totalPrice}</TableCell>
                   <TableCell className="text-white">
                     <span
@@ -246,7 +254,7 @@ function OrdersTable() {
                     </Menu>
                   </TableCell>
 
-                  <TableCell align="left">
+                  <TableCell align="center">
                     <Button
                       onClick={() => handleDeleteOrder(item?._id)}
                       variant="text"
@@ -259,6 +267,16 @@ function OrdersTable() {
             </TableBody>
           </Table>
         </TableContainer>
+      </Card>
+
+      <Card className="mt-2 flex justify-center items-center">
+        <Pagination
+          color="secondary"
+          className="py-5 w-auto"
+          size="large"
+          count={10}
+          onChange={handlePaginationChange}
+        />
       </Card>
     </Box>
   );
